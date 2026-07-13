@@ -1,8 +1,10 @@
 services:
   - type: web
     name: web-based-brain-tumor-detection
-    env: python
+    runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
-    pythonVersion: 3.11.9
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
