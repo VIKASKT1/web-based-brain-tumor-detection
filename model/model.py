@@ -15,7 +15,7 @@ data = []
 labels = []
 
 # Load Tumor images (Label 0)
-for r, d, f in os.walk('dataset/brain_tumor_dataset/yes'):
+for r, d, f in os.walk('model/dataset/brain_tumor_dataset/yes'):
     for file in f:
         if file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png'):
             try:
@@ -28,7 +28,7 @@ for r, d, f in os.walk('dataset/brain_tumor_dataset/yes'):
                 print(f"Skipping corrupted image: {file}")
 
 # Load Non-Tumor images (Label 1)
-for r, d, f in os.walk('dataset/brain_tumor_dataset/no'):
+for r, d, f in os.walk('model/dataset/brain_tumor_dataset/no'):
     for file in f:
         if file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png'):
             try:
@@ -78,7 +78,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 history = model.fit(x_train, y_train, epochs=20, batch_size=32, validation_data=(x_test, y_test))
 
 # Save model in Keras format
-model.save('brain_tumor_classifier_model.keras')
+model.save('model/brain_tumor_classifier_model.keras')
 
 # Evaluation
 loss, accuracy = model.evaluate(x_test, y_test)
@@ -93,7 +93,7 @@ print(f"Training Loss: {train_loss:.4f}")
 print(f"Validation Loss: {val_loss:.4f}")
 
 # Load and predict a single image
-img_path = 'dataset/brain_tumor_dataset/no/1 no.jpeg'  # Update path as needed
+img_path = 'model/dataset/brain_tumor_dataset/no/1 no.jpeg'  # Update path as needed
 try:
     img = Image.open(img_path).convert('RGB').resize((128, 128))  # ✅ Ensure RGB
     img_array = np.array(img) / 255.0

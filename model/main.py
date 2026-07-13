@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the saved model
-model = load_model('brain_tumor_classifier_model.keras')
+model = load_model('model/brain_tumor_classifier_model.keras')
 
 # Path to the image you want to predict
-img_path = 'dataset/yes/Y21.jpg'  # <-- Change path as needed
+img_path = 'model/dataset/brain_tumor_dataset/yes/Y21.jpg'  # <-- Change path as needed
 
 try:
     # Load and preprocess the image
