@@ -287,7 +287,7 @@ def register():
 
         user_check = execute_select("SELECT * FROM tblusers WHERE email = %s", (email,))
         if user_check and isinstance(user_check, list) and len(user_check) > 0:
-            return render_template('register.html', msg="Email already registered. Please login or use another email.", msg_type="danger")
+            return render_template('Register.html', msg="Email already registered. Please login or use another email.", msg_type="danger")
 
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         insert_query = """
@@ -299,9 +299,9 @@ def register():
         if result is True:
             return render_template('Login.html', msg="Registration successful! Please login.", msg_type="success", active_tab="user")
         else:
-            return render_template('register.html', msg="Error during registration. Please try again.", msg_type="danger")
+            return render_template('Register.html', msg="Error during registration. Please try again.", msg_type="danger")
 
-    return render_template('register.html')
+    return render_template('Register.html')
 
 
 @app.route('/user-login', methods=['POST'])
