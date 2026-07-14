@@ -1,10 +1,3 @@
-Good to flag — that changes some of the README's accuracy. Let me fix the DB references throughout to reflect TiDB instead of Aiven MySQL:
-
-Good — TiDB Cloud (Serverless) is MySQL-compatible, so your `database.py`/`mysql-connector-python` setup already works with it as-is, since it's already SSL-enabled by default. No code changes needed, just the README text.
-
-Here's the corrected README:
-
-```markdown
 # 🧠 Brain Tumor Detection System
 
 A web-based application that uses deep learning to detect brain tumors from MRI scan images. Built with Flask, TensorFlow/Keras (CNN), and TiDB (MySQL-compatible), and deployed with a lightweight TFLite inference pipeline for production.
