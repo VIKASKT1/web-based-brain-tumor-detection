@@ -38,16 +38,28 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# --- Lazy model loading so app doesn't crash on startup if model file is missing ---
-model = None
+# --- Lazy TFLite interpreter loading (much lighter than full Keras/TensorFlow) ---
+interpreter = None
 
-def get_model():
-    global model
-    if model is None:
-        from keras.models import load_model
-        model_path = os.path.join(BASE_DIR, 'model', 'brain_tumor_classifier_model.keras')
-        model = load_model(model_path)
-    return model
+def get_interpreter():
+    global interpreter
+    if interpreter is None:
+        import tensorflow as tf
+        model_path = os.path.join(BASE_DIR, 'model', 'brain_tumor_classifier_model.tflite')
+        interpreter = tf.lite.Interpreter(model_path=model_path)
+        interpreter.allocate_tensors()
+    return interpreter
+
+
+def predict_tumor(img_array):
+    """img_array must be shape (1, 128, 128, 3), dtype float32."""
+    interp = get_interpreter()
+    input_details = interp.get_input_details()
+    output_details = interp.get_output_details()
+    interp.set_tensor(input_details[0]['index'], img_array.astype(np.float32))
+    interp.invoke()
+    output = interp.get_tensor(output_details[0]['index'])
+    return output
 
 
 # --- Access control decorators ---
@@ -359,7 +371,7 @@ def user_prediction():
                 return render_template('User/UserPrediction.html', msg='Invalid file type. Use PNG or JPG.', msg_type='warning')
 
             try:
-                clf = get_model()
+                get_interpreter()  # ensures model loads / surfaces errors early
             except Exception as e:
                 print("Model load error:", e)
                 return render_template('User/UserPrediction.html', msg='Model unavailable. Please try again later.', msg_type='danger')
@@ -372,9 +384,9 @@ def user_prediction():
 
             img = Image.open(image_path).convert('RGB').resize((128, 128))
             img_array = np.array(img) / 255.0
-            img_array = img_array.reshape(1, 128, 128, 3)
+            img_array = img_array.reshape(1, 128, 128, 3).astype(np.float32)
 
-            prediction = clf.predict(img_array)
+            prediction = predict_tumor(img_array)
             predicted_class = int(prediction[0][0] > 0.5)
             result = "No Tumor Detected" if predicted_class == 1 else "Tumor Detected"
 
