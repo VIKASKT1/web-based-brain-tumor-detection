@@ -52,7 +52,7 @@ This project allows users to upload an MRI brain scan and receive an instant AI-
 - **Optimizer:** Adam
 - **Classes:** Tumor / No Tumor
 
-For production deployment, the trained `.keras` model was converted to **TensorFlow Lite (.tflite)** format. This reduces the model size by ~90% and significantly lowers memory usage during inference, making it suitable for free-tier cloud hosting. Verification testing confirmed the TFLite model produces predictions matching the original Keras model. Inference in production uses the lightweight `ai-edge-litert` runtime instead of full TensorFlow, further reducing memory overhead.
+For production deployment, the trained Keras model was converted to **TensorFlow Lite (.tflite)** format. This reduces model size by ~90% and significantly lowers memory usage during inference, making it suitable for free-tier cloud hosting. Verification testing confirmed the TFLite model produces predictions matching the original Keras model. Inference in production uses the lightweight `ai-edge-litert` runtime instead of full TensorFlow, further reducing memory overhead — a key fix for staying within free-tier hosting memory limits.
 
 ---
 
@@ -60,30 +60,36 @@ For production deployment, the trained `.keras` model was converted to **TensorF
 
 ```
 
-brain-tumor-detection/
+web-based-brain-tumor-detection/
 │
 ├── app.py                     # Main Flask application
 ├── database.py                 # TiDB/MySQL connection & query handlers
-├── convert_to_tflite.py        # Script to convert/verify TFLite model
 ├── requirements.txt
 ├── Procfile
 ├── runtime.txt
+├── render.yaml
 ├── .gitignore
 ├── .env.example
-├── braintumor.sql              # Database schema + seed data
+├── README.md
 │
 ├── model/
-│   └── brain_tumor_classifier_model.tflite
+│   ├── brain_tumor_classifier_model.tflite   # Production inference model
+│   ├── main.py                                # Model training entry point
+│   └── model.py                                # CNN architecture definition
 │
 ├── static/
 │   ├── css/
-│   ├── images/
-│   └── uploads/                # Uploaded MRI images (runtime)
+│   └── images/
 │
 └── templates/
     ├── Admin/
     ├── User/
-    └── ... (public pages)
+    ├── Home.html
+    ├── About.html
+    ├── Contact.html
+    ├── Login.html
+    ├── Register.html
+    └── Base.html
 ```
 
 ---
@@ -115,10 +121,7 @@ brain-tumor-detection/
    > TiDB Serverless uses port `4000` by default and requires a secure (SSL/TLS) connection.
 
 4. **Set up the database**
-   Import the provided schema into your TiDB cluster:
-   ```bash
-   mysql -h your-tidb-host -P 4000 -u your-tidb-user -p braintumor < braintumor.sql
-   ```
+   Create a database named `braintumor` in your TiDB cluster and create the required tables: `tbladmin`, `tblusers`, `tblfaq`, `tblhealthtips`.
 
 5. **Run the app**
    ```bash
@@ -166,5 +169,3 @@ Final Year Project — Web Based Brain Tumor Detection using Deep Learning
 This system is an academic project intended for educational and demonstration purposes only. It is **not** a certified medical diagnostic tool and should not be used as a substitute for professional medical advice.
 
 ```
-
-Quick note: I set `DB_PORT=4000` (TiDB Serverless's default), and dropped the "connection pooling" line from Future Improvements since TiDB's distributed architecture behaves differently there — not worth a generic MySQL-pooling claim on a different DB engine. Swap the repo URL and author name if either needs adjusting.
