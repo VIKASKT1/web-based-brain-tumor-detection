@@ -38,15 +38,15 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# --- Lazy TFLite interpreter loading (much lighter than full Keras/TensorFlow) ---
+# --- Lazy TFLite interpreter loading (lightweight, no full TensorFlow import) ---
 interpreter = None
 
 def get_interpreter():
     global interpreter
     if interpreter is None:
-        import tensorflow as tf
+        from ai_edge_litert.interpreter import Interpreter
         model_path = os.path.join(BASE_DIR, 'model', 'brain_tumor_classifier_model.tflite')
-        interpreter = tf.lite.Interpreter(model_path=model_path)
+        interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
     return interpreter
 
