@@ -64,6 +64,7 @@ web-based-brain-tumor-detection/
 │
 ├── app.py                     # Main Flask application
 ├── database.py                 # TiDB/MySQL connection & query handlers
+├── braintumor.sql              # Database schema + seed data (FAQs, health tips)
 ├── requirements.txt
 ├── Procfile
 ├── runtime.txt
@@ -90,6 +91,7 @@ web-based-brain-tumor-detection/
     ├── Login.html
     ├── Register.html
     └── Base.html
+
 ```
 
 ---
@@ -121,7 +123,11 @@ web-based-brain-tumor-detection/
    > TiDB Serverless uses port `4000` by default and requires a secure (SSL/TLS) connection.
 
 4. **Set up the database**
-   Create a database named `braintumor` in your TiDB cluster and create the required tables: `tbladmin`, `tblusers`, `tblfaq`, `tblhealthtips`.
+   Import the provided schema into your TiDB cluster:
+   ```bash
+   mysql -h your-tidb-host -P 4000 -u your-tidb-user -p braintumor < braintumor.sql
+   ```
+   > Note: After import, change the default admin password (see `braintumor.sql` for instructions).
 
 5. **Run the app**
    ```bash
@@ -167,5 +173,4 @@ Final Year Project — Web Based Brain Tumor Detection using Deep Learning
 ## ⚠️ Disclaimer
 
 This system is an academic project intended for educational and demonstration purposes only. It is **not** a certified medical diagnostic tool and should not be used as a substitute for professional medical advice.
-
 ```
